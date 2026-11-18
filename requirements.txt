@@ -1,0 +1,9 @@
+flask
+flask-cors
+requests
+yt-dlp
+curl_cffi
+gunicorn
+# optional, for AirPlay output when running locally:
+# pyatv
+# srptools<2

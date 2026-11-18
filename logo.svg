@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Streamify">
+  <defs>
+    <linearGradient id="g" x1="12" y1="6" x2="52" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3be477"/>
+      <stop offset="1" stop-color="#15a84c"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#g)"/>
+  <g transform="translate(-3.5 0)">
+  <!-- play triangle, corners rounded by the stroke -->
+  <path d="M21 21.5v21l16-10.5z" fill="#0a0a0a" stroke="#0a0a0a" stroke-width="4" stroke-linejoin="round"/>
+  <!-- two stream waves leaving the triangle -->
+  <path d="M44 25.5a9 9 0 0 1 0 13" fill="none" stroke="#0a0a0a" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M50 19.5a17 17 0 0 1 0 25" fill="none" stroke="#0a0a0a" stroke-width="3.6" stroke-linecap="round"/>
+  </g>
+</svg>

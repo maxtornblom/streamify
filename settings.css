@@ -1,0 +1,67 @@
+/* Settings page */
+.st-page { max-width: 720px; margin: 0 auto; padding-bottom: 32px; min-width: 0; }
+.st-section { background: var(--panel); border-radius: 12px; padding: 8px 20px 12px; margin-top: 16px; border: 1px solid #ffffff10; }
+.st-section h2 { font-size: 18px; font-weight: 800; letter-spacing: -.2px; padding: 14px 0 6px; }
+.st-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1px solid #ffffff12; min-width: 0; }
+.st-section h2 + .st-row, .st-section h2 + .st-usage { border-top: 0; }
+.st-label { flex: 1 1 auto; min-width: 0; }
+.st-title { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.st-sub { margin-top: 3px; color: var(--sub); font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+.st-ctl { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.st-note { color: var(--sub); font-size: 12.5px; line-height: 1.5; padding: 10px 0 2px; border-top: 1px solid #ffffff12; }
+.st-note + .st-note { border-top: 0; padding-top: 4px; }
+.st-code { background: var(--elev); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: var(--text); }
+.st-value { color: var(--sub); font-size: 14px; }
+.st-modal-text { color: var(--sub); line-height: 1.5; font-size: 14px; }
+
+.st-usage { padding: 12px 0 14px; }
+.st-bar { height: 8px; border-radius: 4px; background: var(--elev); margin: 10px 0 8px; overflow: hidden; }
+.st-bar > span { display: block; height: 100%; width: 0; background: var(--green); border-radius: 4px; transition: width .3s; }
+
+.st-badge { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 500px; background: #ffffff1a; color: var(--sub); font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+.st-badge.ok { background: #1ed7602e; color: var(--green); }
+.st-badge.warn { background: #f5a6232e; color: #f5a623; }
+.st-badge.bad { background: #e221342e; color: #ff6b7a; }
+
+.st-btn { height: 40px; padding: 0 20px; font-size: 14px; white-space: nowrap; }
+.st-btn.ghost { background: #ffffff14; color: var(--text); }
+.st-btn.ghost:hover { background: #ffffff24; color: var(--text); }
+.st-btn.danger:hover { background: #f03447; }
+.st-btn:disabled { opacity: .5; pointer-events: none; }
+.st-page button:focus-visible, .st-page .switch:focus-within, .seg button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+#modal-box .btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* toggle switch */
+.switch { position: relative; display: inline-block; width: 52px; height: 32px; flex: 0 0 auto; cursor: pointer; border-radius: 16px; }
+.switch input { position: absolute; top: -6px; left: -4px; width: calc(100% + 8px); height: calc(100% + 12px); margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
+.switch .st-knob { position: absolute; inset: 0; border-radius: 16px; background: #5a5a5a; transition: background .18s; }
+.switch .st-knob::after { content: ""; position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px #0006; transition: transform .18s; }
+.switch input:checked + .st-knob { background: var(--green); }
+.switch input:checked + .st-knob::after { transform: translateX(20px); }
+
+/* segmented control */
+.seg { display: inline-flex; background: var(--elev); border-radius: 500px; padding: 3px; gap: 2px; }
+.seg button { min-width: 48px; height: 36px; padding: 0 14px; border-radius: 500px; font-weight: 700; font-size: 14px; color: var(--sub); transition: background .15s, color .15s; }
+.seg button:hover { color: var(--text); }
+.seg button[aria-pressed="true"] { background: var(--text); color: #000; }
+
+@media (prefers-reduced-motion: reduce) {
+  .switch .st-knob, .switch .st-knob::after, .seg button, .st-bar > span, .st-btn { transition: none; }
+  .st-btn:hover { transform: none; }
+}
+
+@media (max-width: 700px) {
+  .st-section { padding: 6px 16px 10px; border-radius: 10px; }
+  .st-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .st-ctl { justify-content: flex-start; }
+  .st-ctl .st-btn { flex: 1 1 auto; height: 44px; }
+  .st-btn { height: 44px; }
+  .seg { display: flex; }
+  .seg button { flex: 1; height: 44px; }
+  /* switch rows keep label and toggle side by side: a 52 px toggle needn't be full width */
+  .st-row:has(.switch) { flex-direction: row; align-items: center; }
+  .st-row:has(.switch) .st-ctl { justify-content: flex-end; }
+  .switch { width: 56px; height: 34px; }
+  .switch .st-knob::after { width: 28px; height: 28px; }
+  .switch input:checked + .st-knob::after { transform: translateX(22px); }
+}

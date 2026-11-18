@@ -1,0 +1,22 @@
+services:
+  streamify:
+    build: .
+    image: streamify:local
+    container_name: streamify
+    restart: unless-stopped
+    environment:
+      STREAMIFY_PUBLIC: "1"   # open to everyone; remove (and set STREAMIFY_TOKEN) to require a token
+      STREAMIFY_TOKEN: ${STREAMIFY_TOKEN}
+    networks:
+      # shared with the PaxTheKlosett stack so its Caddy (the one the router forwards to) can reach us
+      - proxy
+    volumes:
+      - streamify-data:/data
+      - streamify-cache:/app/cache
+volumes:
+  streamify-data:
+  streamify-cache:
+networks:
+  proxy:
+    name: paxtheklosett_default
+    external: true

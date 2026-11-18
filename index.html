@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Streamify" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <title>Streamify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="offline.css" />
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <audio id="audio" preload="none"></audio>
+
+    <div class="app" id="app">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <nav class="panel nav-panel">
+          <div class="brand"><img src="logo.svg" alt="" /><span>Streamify</span></div>
+          <button class="nav-item active" id="nav-home" data-act="nav" data-view="home">
+            <span data-icon="home"></span><span>Home</span>
+          </button>
+          <button class="nav-item" id="nav-search" data-act="nav" data-view="search">
+            <span data-icon="search"></span><span>Search</span>
+          </button>
+          <button class="nav-item" id="nav-settings" data-act="open-settings">
+            <span data-icon="settings"></span><span>Settings</span>
+          </button>
+          <button hidden id="btn-install" class="nav-item" data-act="install">
+            <span data-icon="download"></span><span>Install app</span>
+          </button>
+        </nav>
+        <section class="panel lib-panel">
+          <div class="lib-head">
+            <span class="lib-title"><span data-icon="library"></span>Your Library</span>
+            <button class="icon-btn" data-act="new-pl" title="Create playlist">
+              <span data-icon="plus"></span>
+            </button>
+          </div>
+          <div class="lib-chips" id="lib-chips"></div>
+          <div id="playlist-list" class="lib-list"></div>
+        </section>
+      </aside>
+
+      <!-- Main -->
+      <main class="main panel" id="main">
+        <header class="topbar" id="topbar">
+          <div class="nav-arrows">
+            <button class="circle-btn" id="btn-back" data-act="back" title="Back"><span data-icon="chevron-left"></span></button>
+            <button class="circle-btn" id="btn-fwd" data-act="forward" title="Forward"><span data-icon="chevron-right"></span></button>
+          </div>
+          <div class="tb-title" id="tb-title" aria-hidden="true"></div>
+          <div class="search-box">
+            <button class="icon-btn" data-act="nav" data-view="home" title="Home"><span data-icon="home"></span></button>
+            <div class="search-field">
+              <span data-icon="search" class="si"></span>
+              <input id="q" type="text" placeholder="What do you want to play?" autocomplete="off" spellcheck="false" />
+              <button class="icon-btn clear" id="q-clear" data-act="clear-search" title="Clear"><span data-icon="close" data-size="18"></span></button>
+            </div>
+          </div>
+        </header>
+        <div class="view-bg" id="view-bg"></div>
+        <div class="offline-banner" id="offline-banner" hidden>
+          Backend not running. Start it with <code>python backend.py</code>, then refresh.
+        </div>
+        <div id="view"></div>
+      </main>
+
+      <!-- Queue -->
+      <aside class="queue panel" id="queue-panel" hidden></aside>
+
+      <!-- Drag handles in the gaps between panels -->
+      <div class="resizer" id="rs-left" data-side="left" role="separator" aria-orientation="vertical" aria-label="Resize sidebar" tabindex="0" title="Drag to resize · double-click to reset"></div>
+      <div class="resizer" id="rs-right" data-side="right" role="separator" aria-orientation="vertical" aria-label="Resize side panel" tabindex="0" title="Drag to resize · double-click to reset"></div>
+    </div>
+
+    <!-- Player -->
+    <footer class="player">
+      <div class="p-left">
+        <div class="p-cover" id="p-cover"><span data-icon="music" data-size="22"></span></div>
+        <div class="p-info">
+          <div class="p-title" id="p-title"></div>
+          <a class="p-artist" id="p-artist" data-act="artist"></a>
+        </div>
+        <button class="icon-btn heart" id="p-like" data-act="like-current" title="Save to Liked Songs">
+          <span data-icon="heart" data-size="18"></span><span data-icon="heart-fill" data-size="18"></span>
+        </button>
+      </div>
+
+      <div class="p-center">
+        <div class="controls">
+          <button class="ctrl" id="btn-shuffle" data-act="shuffle" title="Shuffle (S)"><span data-icon="shuffle" data-size="20"></span></button>
+          <button class="ctrl" data-act="prev" title="Previous (Shift+←)"><span data-icon="prev" data-size="26"></span></button>
+          <button class="play-btn" id="btn-play" data-act="toggle" title="Play / Pause (Space)">
+            <span class="i-play" data-icon="play" data-size="20"></span>
+            <span class="i-pause" data-icon="pause" data-size="20"></span>
+            <span class="spin"></span>
+          </button>
+          <button class="ctrl" data-act="next" title="Next (Shift+→)"><span data-icon="next" data-size="26"></span></button>
+          <button class="ctrl" id="btn-repeat" data-act="repeat" title="Repeat (R)"><span data-icon="repeat" data-size="20"></span><b class="one">1</b></button>
+        </div>
+        <div class="progress-row">
+          <span class="time" id="t-cur">0:00</span>
+          <div class="slider" id="progress"><div class="rail"><div class="fill"></div></div><div class="knob"></div></div>
+          <span class="time" id="t-dur">0:00</span>
+        </div>
+      </div>
+
+      <div class="p-right">
+        <button class="ctrl" id="btn-lyrics" data-act="toggle-lyrics" title="Lyrics (L)"><span data-icon="lyrics" data-size="20"></span></button>
+        <button class="ctrl" data-act="lyrics-full" title="Full-screen lyrics (F)"><span data-icon="expand" data-size="18"></span></button>
+        <button class="ctrl" id="btn-queue" data-act="toggle-queue" title="Queue (Q)"><span data-icon="queue" data-size="20"></span></button>
+        <button class="ctrl" id="btn-airplay" data-act="airplay" title="Connect to an AirPlay device"><span data-icon="airplay" data-size="20"></span></button>
+        <button class="ctrl" id="btn-sleep" data-act="sleep" title="Sleep timer"><span data-icon="moon" data-size="20"></span><b class="sleep-left" id="sleep-left"></b></button>
+        <button class="ctrl" id="btn-mute" data-act="mute" title="Mute (M)">
+          <span class="i-vol" data-icon="volume" data-size="20"></span><span class="i-mute" data-icon="mute" data-size="20"></span>
+        </button>
+        <div class="slider vol" id="volume"><div class="rail"><div class="fill"></div></div><div class="knob"></div></div>
+      </div>
+    </footer>
+
+    <!-- Phone navigation (hidden on desktop via CSS) -->
+    <nav id="tabbar" class="tabbar">
+      <button class="tab" id="tab-home" data-act="nav" data-view="home"><span data-icon="home" data-size="24"></span><span class="tab-label">Home</span></button>
+      <button class="tab" id="tab-search" data-act="nav" data-view="search"><span data-icon="search" data-size="24"></span><span class="tab-label">Search</span></button>
+      <button class="tab" id="tab-library" data-act="nav" data-view="library"><span data-icon="library" data-size="24"></span><span class="tab-label">Your Library</span></button>
+    </nav>
+
+    <div id="mini" class="mini" hidden>
+      <img id="mini-cover" alt="" data-act="np-open" />
+      <div class="mini-info" data-act="np-open"><div id="mini-title"></div><div id="mini-artist"></div></div>
+      <button id="mini-like" class="icon-btn heart" data-act="like-current" title="Save to Liked Songs"><span data-icon="heart" data-size="22"></span><span data-icon="heart-fill" data-size="22"></span></button>
+      <button id="mini-play" class="play-btn-mini" data-act="toggle" title="Play / Pause">
+        <span class="i-play" data-icon="play" data-size="22"></span>
+        <span class="i-pause" data-icon="pause" data-size="22"></span>
+        <span class="spin"></span>
+      </button>
+      <div id="mini-prog"><div class="fill"></div></div>
+    </div>
+
+    <section id="np" class="np" hidden>
+      <div class="np-screen">
+        <div class="np-head">
+          <button id="np-close" class="icon-btn" data-act="np-close" title="Close"><span data-icon="chevron-down" data-size="28"></span></button>
+          <div class="np-title-top">Now playing</div>
+          <button id="np-menu" class="icon-btn" data-act="np-menu" title="More options"><span data-icon="more" data-size="24"></span></button>
+        </div>
+        <div class="np-art"><img id="np-cover" alt="" /></div>
+        <div class="np-meta">
+          <div class="np-meta-text"><div id="np-title"></div><a id="np-artist" data-act="artist"></a></div>
+          <button id="np-like" class="icon-btn heart" data-act="like-current" title="Save to Liked Songs"><span data-icon="heart" data-size="26"></span><span data-icon="heart-fill" data-size="26"></span></button>
+        </div>
+        <div class="np-seek">
+          <div class="slider" id="np-progress"><div class="rail"><div class="fill"></div></div><div class="knob"></div></div>
+          <div class="np-times"><span id="np-cur">0:00</span><span id="np-dur">0:00</span></div>
+        </div>
+        <div class="np-controls">
+          <button class="ctrl" id="np-shuffle" data-act="shuffle" title="Shuffle"><span data-icon="shuffle" data-size="28"></span></button>
+          <button class="ctrl" id="np-prev" data-act="prev" title="Previous"><span data-icon="prev" data-size="32"></span></button>
+          <button class="play-btn" id="np-play" data-act="toggle" title="Play / Pause">
+            <span class="i-play" data-icon="play" data-size="28"></span>
+            <span class="i-pause" data-icon="pause" data-size="28"></span>
+            <span class="spin"></span>
+          </button>
+          <button class="ctrl" id="np-next" data-act="next" title="Next"><span data-icon="next" data-size="32"></span></button>
+          <button class="ctrl" id="np-repeat" data-act="repeat" title="Repeat"><span data-icon="repeat" data-size="28"></span><b class="one">1</b></button>
+        </div>
+        <div class="np-foot">
+          <button class="ctrl" id="np-queue" data-act="toggle-queue" title="Queue" aria-label="Queue"><span data-icon="queue" data-size="24"></span><span class="np-cap">Queue</span></button>
+          <button class="ctrl" id="np-airplay" data-act="airplay" title="AirPlay" aria-label="AirPlay"><span data-icon="airplay" data-size="24"></span><span class="np-cap">AirPlay</span></button>
+          <button class="ctrl" id="np-sleep" data-act="sleep" title="Sleep timer" aria-label="Sleep timer"><span data-icon="moon" data-size="24"></span><span class="np-cap" id="np-sleep-cap">Sleep</span></button>
+        </div>
+      </div>
+      <div class="np-lyrics" id="np-ly" data-act="toggle-lyrics">
+        <div class="npl-head"><b>Lyrics</b><span class="npl-expand">Expand<span data-icon="expand" data-size="16"></span></span></div>
+        <div class="npl-body" id="npl-body"></div>
+      </div>
+    </section>
+
+    <div class="ly-full" id="ly-full" hidden></div>
+    <div id="menu-scrim" hidden></div>
+    <div class="menu" id="menu" hidden></div>
+    <div class="modal-overlay" id="modal" hidden><div class="modal" id="modal-box"></div></div>
+    <div class="toast" id="toast"></div>
+
+    <script src="offline.js"></script>
+    <script src="app.js"></script>
+    <script src="settings.js"></script>
+  </body>
+</html>
